@@ -1,0 +1,82 @@
+metadata:
+  version: 1
+  description: Local Data Alert Queries
+  data_environments: [LocalData]
+  data_families: [SecurityAlert, WindowsSecurity, Network, Azure]
+  tags: ['alert', 'securityalert', 'process', 'account', 'network', 'logon']
+defaults:
+  metadata:
+    data_source: 'security_alert'
+  parameters:
+    start:
+      type: datetime
+      description: Query start time
+      default: -1
+    end:
+      type: datetime
+      description: Query start time
+      default: 0
+sources:
+  get_network_summary:
+    description: Network summary for Timeseries
+    metadata:
+      data_families: [Network]
+      pivot:
+        short_name: net_flows_summ
+        direct_func_entities:
+          - Host
+          - IpAddress
+    args:
+      query: timeseries_ud.pkl
+    parameters:
+  get_network_flows:
+    description: Network raw flows
+    metadata:
+      data_families: [Network]
+      pivot:
+        short_name: net_flows_raw
+    args:
+      query: raw_net_ud.pkl
+    parameters:
+  list_host_logons:
+    description: List logons on host
+    metadata:
+      data_families: [WindowsSecurity]
+      pivot:
+        short_name: host_logons
+        direct_func_entities:
+          - Host
+    args:
+      query: host_logons.pkl
+    parameters:
+      host_name:
+        description: Host name for lookup queries
+        type: str
+  list_host_processes:
+    description: List processes on host
+    metadata:
+      data_families: [WindowsSecurity]
+      pivot:
+        short_name: host_processes
+        direct_func_entities:
+          - Host
+    args:
+      query: processes_on_host_ud.pkl
+    parameters:
+      host_name:
+        description: Host name for lookup queries
+        type: str
+  OfficeActivity:
+    description: Office 365 activity
+    metadata:
+      data_families: [Azure]
+      pivot:
+        short_name: office_activity
+        direct_func_entities:
+          - Account
+    args:
+      query: o365_anom.pkl
+    parameters:
+      account_name:
+        description: Account name for lookup queries
+        type: str
