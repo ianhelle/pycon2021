@@ -1,0 +1,20 @@
+pivot_providers:
+  url_comps:
+    src_module: pivot_funcs
+    src_func_name: split_url
+    func_new_name: url_comps
+    input_type: value
+    entity_map:
+      Url: Url
+    func_input_value_arg: url
+    entity_container_name: cust_util
+    create_shortcut: True
+  is_https:
+    src_module: pivot_funcs
+    src_func_name: is_https
+    input_type: value
+    entity_map:
+      Url: Url
+    func_input_value_arg: url
+    entity_container_name: cust_util
+    create_shortcut: True

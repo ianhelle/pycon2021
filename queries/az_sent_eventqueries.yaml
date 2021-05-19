@@ -1,0 +1,56 @@
+
+metadata:
+  version: 1
+  description: Security event queries
+  data_environments: [AzureSentinel]
+  data_families: [CustomQueries]
+  tags: ['windows', 'event', 'security']
+defaults:
+  metadata:
+  parameters:
+    table:
+      description: The name of the source table
+      type: str
+      default: SecurityEvent
+    start:
+      description: start of the query
+      type: datetime
+      default: -1
+    end:
+      description: end of the query
+      type: datetime
+      default: 0
+    add_query_items:
+        description: Additional query clauses (precede with "|")
+        type: str
+        default: ""
+sources:
+  list_events_by_id:
+    description: Retrieves list of events on a host
+    args:
+      query: '
+        {table}
+        | where EventID in ({event_list})
+        | where TimeGenerated >= datetime({start})
+        | where TimeGenerated <= datetime({end})
+        {add_query_items}'
+    parameters:
+      event_list:
+        description: List of event IDs to match
+        type: list
+  list_events_by_host:
+    metadata:
+      data_families: [CustomQueries_Host]
+    description: Retrieves list of events on a host
+    args:
+      query: '
+        {table}
+        | where Computer has ({host_name})
+        | where TimeGenerated >= datetime({start})
+        | where TimeGenerated <= datetime({end})
+        {add_query_items}'
+    parameters:
+      host_name:
+        description: Name (or partial name) of host to search for.
+        type: str
+      
